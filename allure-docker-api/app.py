@@ -18,6 +18,7 @@ DEFAULT_TEMPLATE = 'default.html'
 CSS = "https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/cosmo/bootstrap.css"
 SERVER_URL = "http://localhost:" + os.environ['PORT']
 TITLE = "Emailable Report"
+API_RESPONSE_LESS_VERBOSE = ''
 
 if "EMAILABLE_REPORT_CSS_CDN" in os.environ:
     app.logger.info('Overriding CSS')
@@ -30,6 +31,9 @@ if "EMAILABLE_REPORT_TITLE" in os.environ:
 if "SERVER_URL" in os.environ:
     app.logger.info('Overriding Allure Server Url')
     SERVER_URL = os.environ['SERVER_URL']
+
+if "API_RESPONSE_LESS_VERBOSE" in os.environ:
+    API_RESPONSE_LESS_VERBOSE = os.environ['API_RESPONSE_LESS_VERBOSE']
 
 ### swagger specific ###
 SWAGGER_URL = '/swagger'
@@ -154,20 +158,34 @@ def send_results():
         resp = jsonify(body)
         resp.status_code = 400
     else:
-        body = {
-            'data': {
-                'current_files': files,
-                'current_files_count': currentFilesCount,
-                'failed_files': failedFiles,
-                'failed_files_count': failedFilesCount,
-                'processed_files': processedFiles,
-                'processed_files_count': processedFilesCount,
-                'sent_files_count': sentFilesCount
-                },
-            'meta_data': {
-                'message' : "Results successfully sent"
+        if API_RESPONSE_LESS_VERBOSE != "1":
+            body = {
+                'data': {
+                    'current_files': files,
+                    'current_files_count': currentFilesCount,
+                    'failed_files': failedFiles,
+                    'failed_files_count': failedFilesCount,
+                    'processed_files': processedFiles,
+                    'processed_files_count': processedFilesCount,
+                    'sent_files_count': sentFilesCount
+                    },
+                'meta_data': {
+                    'message' : "Results successfully sent"
+                }
             }
-        }
+        else:
+            body = {
+                'data': {
+                    'current_files_count': currentFilesCount,
+                    'failed_files_count': failedFilesCount,
+                    'processed_files_count': processedFilesCount,
+                    'sent_files_count': sentFilesCount
+                    },
+                'meta_data': {
+                    'message' : "Results successfully sent"
+                }
+            }
+
         resp = jsonify(body)
         resp.status_code = 200
 
@@ -192,14 +210,22 @@ def generate_report():
         resp = jsonify(body)
         resp.status_code = 400
     else:
-        body = {
-            'data': {
-                'allure_results_files': files
-            },
-            'meta_data': {
-                'message' : "Report successfully generated"
+        if API_RESPONSE_LESS_VERBOSE != "1":
+            body = {
+                'data': {
+                    'allure_results_files': files
+                },
+                'meta_data': {
+                    'message' : "Report successfully generated"
+                }
             }
-        }
+        else:
+            body = {
+                'meta_data': {
+                    'message' : "Report successfully generated"
+                }
+            }
+
         resp = jsonify(body)
         resp.status_code = 200
 
