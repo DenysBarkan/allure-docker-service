@@ -37,6 +37,7 @@ RUN chmod -R +x /allure-$RELEASE/bin
 COPY --chown=allure:allure ./allure-docker-api /app/allure-docker-api
 
 ENV ROOT=/app
+ENV TEMP_RESULTS_HISTORY=$ROOT/temp-history
 ENV ALLURE_HOME=/allure-$RELEASE
 ENV PATH=$PATH:$ALLURE_HOME/bin
 ENV RESULTS_DIRECTORY=$ROOT/allure-results
@@ -53,6 +54,7 @@ RUN echo "ALLURE_VERSION: "$(cat ${ALLURE_VERSION})
 WORKDIR $ROOT
 ADD allure-docker-scripts/*.sh $ROOT/
 RUN chmod +x $ROOT/*.sh
+RUN mkdir $TEMP_RESULTS_HISTORY
 RUN mkdir $RESULTS_DIRECTORY
 RUN mkdir $REPORT_DIRECTORY
 RUN mkdir $EMAILABLE_REPORT_DIRECTORY

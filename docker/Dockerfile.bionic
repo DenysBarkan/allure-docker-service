@@ -52,6 +52,7 @@ RUN groupadd --gid ${GID} allure \
     && useradd --uid ${UID} --gid allure --shell /bin/bash --create-home allure
 
 ENV ROOT=/app
+ENV TEMP_RESULTS_HISTORY=$ROOT/temp-history
 ENV ALLURE_HOME=/allure-$ALLURE_RELEASE
 ENV PATH=$PATH:$ALLURE_HOME/bin
 ENV RESULTS_DIRECTORY=$ROOT/allure-results
@@ -69,6 +70,7 @@ WORKDIR $ROOT
 COPY --chown=allure:allure allure-docker-api $ROOT/allure-docker-api
 COPY --chown=allure:allure allure-docker-scripts $ROOT/
 RUN chmod +x $ROOT/*.sh && \
+    mkdir $TEMP_RESULTS_HISTORY && \
     mkdir $RESULTS_DIRECTORY && \
     mkdir $REPORT_DIRECTORY && \
     mkdir $EMAILABLE_REPORT_DIRECTORY && \
